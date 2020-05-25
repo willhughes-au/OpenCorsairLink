@@ -18,7 +18,8 @@
 
 #include "device.h"
 #include "driver.h"
-#include "print.h"
+#include "logic/print.h"
+#include "logic/options.h"
 #include "lowlevel/platinum.h"
 #include "protocol/platinum.h"
 
@@ -116,8 +117,8 @@ corsairlink_platinum_fan_curve(
     commands[++ii] = 0x00;
 
     commands[0] = ii;
-    rr = dev->driver->write( handle, dev->write_endpoint, commands, 64 );
-    rr = dev->driver->read( handle, dev->read_endpoint, response, 64 );
+    rr = dev->lowlevel->write( handle, dev->write_endpoint, commands, 64 );
+    rr = dev->lowlevel->read( handle, dev->read_endpoint, response, 64 );
 
     return rr;
 }

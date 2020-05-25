@@ -18,9 +18,10 @@
 
 #include "device.h"
 #include "driver.h"
+#include "logic/print.h"
 #include "lowlevel/platinum.h"
-#include "print.h"
 #include "protocol/platinum.h"
+#include "protocol/crc.h"
 
 #include <errno.h>
 #include <libusb.h>
@@ -78,25 +79,22 @@ corsairlink_platinum_firmware_id(
     uint8_t firmware_size )
 {
     int rr;
-    uint8_t response[64];
-    uint8_t commands[64];
+    uint8_t response[0x40];
+    uint8_t commands[0x40];
     memset( response, 0, sizeof( response ) );
     memset( commands, 0, sizeof( commands ) );
 
-    uint8_t ii = 0;
-
     commands[0x00] = 0x3F;
-    commands[0x01] = CommandId++; // Command ID
-    commands[0x02] = 0xFF; // Command Opcode
-    commands[0x40] = 0xD8; // CRC ??
-    // commands[0] = ii; // Length
+    commands[0x01] = 0x78; // Command ID
 
-    rr = dev->driver->write( handle, dev->write_endpoint, commands, 64 );
-    rr = dev->driver->read( handle, dev->read_endpoint, response, 64 );
+    commands[0x3F] = crc8ccitt(commands+1, 62);
+
+    rr = dev->lowlevel->write( handle, dev->write_endpoint, commands, 64 );
+    rr = dev->lowlevel->read( handle, dev->read_endpoint, response, 64 );
 
     snprintf(
-        firmware, firmware_size, "%d.%d.%d", ( response[3] & 240 ) >> 4, ( response[3] & 15 ),
-        response[2] );
+        firmware, firmware_size, "%d.%d.%d",
+        ( response[2] ) >> 4, ( response[2] & 0xf ), response[3] );
 
     return 0;
 }

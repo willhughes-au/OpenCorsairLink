@@ -358,6 +358,7 @@ struct corsair_device_info corsairlink_devices[] = {
         .read_endpoint = 0x01 | LIBUSB_ENDPOINT_IN,
         .write_endpoint = 0x01 | LIBUSB_ENDPOINT_OUT,
         .driver = &corsairlink_driver_platinum,
+        .lowlevel = &corsairlink_lowlevel_platinum,
         .led_control_count = 1,
         .fan_control_count = 2,
         .pump_index = 0,

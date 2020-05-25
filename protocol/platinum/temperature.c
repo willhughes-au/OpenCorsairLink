@@ -29,34 +29,6 @@
 #include <unistd.h>
 
 int
-corsairlink_platinum_tempsensorscount(
-    struct corsair_device_info* dev,
-    struct libusb_device_handle* handle,
-    uint8_t* temperature_sensors_count )
-{
-    int rr;
-    uint8_t response[64];
-    uint8_t commands[64];
-    memset( response, 0, sizeof( response ) );
-    memset( commands, 0, sizeof( commands ) );
-
-    uint8_t ii = 0;
-
-    commands[++ii] = CommandId++; // Command ID
-    commands[++ii] = ReadOneByte; // Command Opcode
-    commands[++ii] = TEMP_CountSensors; // Command data...
-
-    commands[0] = ii; // Length
-
-    rr = dev->driver->write( handle, dev->write_endpoint, commands, 64 );
-    rr = dev->driver->read( handle, dev->read_endpoint, response, 64 );
-
-    *( temperature_sensors_count ) = response[2];
-
-    return rr;
-}
-
-int
 corsairlink_platinum_temperature(
     struct corsair_device_info* dev,
     struct libusb_device_handle* handle,
@@ -69,24 +41,16 @@ corsairlink_platinum_temperature(
     memset( response, 0, sizeof( response ) );
     memset( commands, 0, sizeof( commands ) );
 
-    uint8_t ii = 0;
+    commands[0x00] = 0x3F;
+    commands[0x01] = 0x78;
 
-    commands[++ii] = CommandId++; // Command ID
-    commands[++ii] = WriteOneByte; // Command Opcode
-    commands[++ii] = TEMP_SelectActiveSensor; // Command data...
-    commands[++ii] = selector;
+    commands[0x40] = crc8ccitt(commands+1, 62);
 
-    commands[++ii] = CommandId++; // Command ID
-    commands[++ii] = ReadTwoBytes; // Command Opcode
-    commands[++ii] = TEMP_Read; // Command data...
-
-    commands[0] = ii; // Length
-
-    rr = dev->driver->write( handle, dev->write_endpoint, commands, 64 );
-    rr = dev->driver->read( handle, dev->read_endpoint, response, 64 );
+    rr = dev->lowlevel->write( handle, dev->write_endpoint, commands, 64 );
+    rr = dev->lowlevel->read( handle, dev->read_endpoint, response, 64 );
 
     // *(temperature) = (response[5]<<8) + response[4];
-    *( temperature ) = (double)response[5] + ( (double)response[4] / 256 );
+    *( temperature ) = (double)response[8] + ( (double)response[7] / 256 );
     // snprintf(temperature, temperature_str_len, "%d.%d C", response[5],
     // response[4]);
 

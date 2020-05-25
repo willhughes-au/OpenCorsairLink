@@ -35,6 +35,7 @@ extern struct corsair_lowlevel_driver corsairlink_lowlevel_asetekpro;
 extern struct corsair_lowlevel_driver corsairlink_lowlevel_commanderpro;
 extern struct corsair_lowlevel_driver corsairlink_lowlevel_dongle;
 extern struct corsair_lowlevel_driver corsairlink_lowlevel_coolit;
+extern struct corsair_lowlevel_driver corsairlink_lowlevel_platinum;
 extern struct corsair_lowlevel_driver corsairlink_lowlevel_rmi;
 
 struct corsair_device_driver

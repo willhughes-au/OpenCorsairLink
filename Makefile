@@ -61,6 +61,7 @@ DRIVER_SOURCE := \
 	drivers/coolit_old.c \
 	drivers/coolit.c \
 	drivers/dongle.c \
+	drivers/platinum.c \
 	drivers/rmi.c \
 	drivers/unsupported.c
 
@@ -92,6 +93,7 @@ PROTOCOL_SOURCE := \
 	protocol/coolit/pump.c \
 	protocol/coolit/temperature.c \
 	protocol/platinum/core.c \
+	protocol/platinum/crc.c \
 	protocol/platinum/fan.c \
 	protocol/platinum/fan_curve.c \
 	protocol/platinum/led.c \

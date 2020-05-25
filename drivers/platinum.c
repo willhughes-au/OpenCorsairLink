@@ -18,20 +18,23 @@
 
 #include "driver.h"
 #include "device.h"
+#include "logic/print.h"
 #include "lowlevel/platinum.h"
-#include "print.h"
 #include "protocol/platinum.h"
 
-struct corsair_device_driver corsairlink_driver_platinum = {
+struct corsair_lowlevel_driver corsairlink_lowlevel_platinum = {
     .init = corsairlink_platinum_init,
     .deinit = corsairlink_platinum_deinit,
+    .read = corsairlink_platinum_read,
+    .write = corsairlink_platinum_write,
+};
+
+struct corsair_device_driver corsairlink_driver_platinum = {
     .name = corsairlink_platinum_name,
     .vendor = corsairlink_platinum_vendor,
     .product = corsairlink_platinum_product,
     // .device_id = corsairlink_platinum_device_id,
-    // .fw_version = corsairlink_platinum_firmware_id,
-    .read = corsairlink_platinum_read,
-    .write = corsairlink_platinum_write,
+    .fw_version = corsairlink_platinum_firmware_id,
     .temperature =
         {
             // .read = corsairlink_platinum_temperature,
